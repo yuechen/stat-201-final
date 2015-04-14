@@ -1,0 +1,32 @@
+body {
+	background: #ccc;
+	margin: 0;
+	padding: 0;
+	font-family: Georgia;
+	font-size: 0.8em;
+}
+
+#wrapper {
+	width: 600px;
+	padding: 0;
+	margin: 0 auto;
+	background: white;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+#page_title {
+	text-align: center;
+	margin: 0;
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
+
+label {
+	font-weight: bold;
+	color: #555;
+}
+
+.clear {
+	clear: both;
+}
