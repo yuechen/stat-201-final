@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>The Prosecutor's Fallacy</title>
+	<link href="styles.css" type="text/css" rel="stylesheet"/>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+	<style>
+		body p {
+			font-size: 16px;
+			line-height: 1.4em;
+		}
+
+		#prob, #pop {
+			width: 60px;
+		}
+
+		#calculate {float: right;}
+		
+		#form_wrapper {
+			width: 100%;
+			border: 2px dashed #ccc;
+		}
+		
+		form {
+			width: 323px;
+			margin: 0px auto;
+			padding: 20px;
+		}
+	</style>
+
+	<script>
+		var calculation_html;
+	
+		function numberWithCommas(x) {
+		    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		}
+
+		function calculate() {
+			var prob = $("#prob").val() / 100;
+			var pop = $("#pop").val();
+			
+			var denom = Math.round(prob * pop);
+			if (denom < 1) {
+				$("#calculation").html("<p>With the numbers you chose, there are <b>fewer than 1</b> people expected to possess all those characteristics! Please increase the probability or population size.</p>");
+				$("#explain").hide();
+			} else {
+				$("#calculation").html(calculation_html);
+				$("#explain").show();
+			}
+			
+			$("#prob_field").html($("#prob").val() + "%");
+			$("#pop_field").html(numberWithCommas(pop));
+			$("#people_field").html(numberWithCommas(denom));
+			$("#prob3_field").html(denom);
+			var prob_innocence = Math.round((denom - 1) / denom * 100);
+			$("#prob5_field").html(prob_innocence + "%");
+		}
+
+		$(document).ready(function() {
+			$('input').keypress(function (e) {
+			  if (e.which == 13) {
+			  	e.preventDefault();
+			    calculate();
+			  }
+			});
+			
+			$("#calculate").click(function() {
+				calculate();
+			});
+			
+			calculation_html = $("#calculation").html();
+			calculate();
+		});
+	</script>
+</head>
+
+<body>
+	<div id="wrapper">
+		<h1 id="page_title">The Prosecutor's Fallacy</h1>
+
+		<h2>The Prosecutor's Argument</h2>
+		<img src="images/prosecutor.gif" style="width: 250px; height: auto; float: left; margin-right: 20px;"/>
+		<p>Your Honor. This subject matches the descriptions for the perpetrator perfectly. He's male, 6-ft tall, between 20 and 25 years old, white, and has a birth mark in a shape of a circle on your forehead.</p>
+		<p>There's only a 0.002% chance of any random individual having all of these characteristics. Therefore, we can be very sure that this is indeed the criminal we are certain for!</p>
+
+		<div class="clear"></div>
+
+		<h2>Is He Right?</h2>
+		<p>For our argument, we're going to continue to assume that the probability of any individual having all those characteristics is <b>0.002%</b> (which is extraordinarily low!), and that the population of the city is <b>8,406,000</b> (which was the population of New York in 2013). You can feel free to play around with these numbers!</p>
+		
+		<h2>Let's Do Some Calculation</h2>
+		<div id="form_wrapper"><form>
+			<label for="probability">Probability of Matching Description: </label><input type="text" id="prob" value="0.002"/> %<br/><br/>
+			<label for="population">Population Size: </label><input type="text" id="pop" value="8406000"/>
+			<input type="button" value="Calculate" id="calculate"/>
+		</form></div>
+		
+		<div id="calculation">
+			<p>With the above assumptions, there's a <b id="prob_field"></b> chance of anyone in the city fitting the description.<p>
+			<p>There are <b id="pop_field"></b> people in the city. That means there are roughly <b id="people_field"></b>
+			people fitting those descriptions in that city.</p>
+			<p>The chance that any one person in that city that fits those descriptions is the actual criminal is therefore <b>1/</b><b id="prob3_field"></b>, and the <b>probability of innocence</b> for any specific suspect based solely on those descriptions is roughly <b id="prob5_field"></b>!</p>
+		</div>
+		
+		<div id="explain">
+			<h2>Why Is This?</h2>
+			<p>In this instance, it is more likely that the suspect is innocent than he is guilty! This is because the prosecutor failed to take into account the fact that there are so many people that could be the criminal. The fact that the distinguishing factors are so rare does not make his argument a good one, because there are still many people who would fit the description in a large population!</p>
+		</div>
+	</div>
+</body>
+
+</html>
