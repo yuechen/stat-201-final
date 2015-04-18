@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Penny's Game</title>
+	<link href="styles.css" type="text/css" rel="stylesheet"/>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+	<style>
+		body p {
+			font-size: 16px;
+			line-height: 1.4em;
+		}
+
+		#form_wrapper {
+			width: 100%;
+			border: 2px dashed #ccc;
+		}
+
+		form {
+			width: 250px;
+			margin: 0px auto;
+			padding: 20px;
+		}
+
+		table {
+			width: 390px;
+			margin: 20px auto;
+			border-collapse: collapse;
+		}
+
+		table th, table td {
+			padding: 13px;
+			border: 1px solid #ccc;
+		}
+
+		table td {
+			text-align: center;
+		}
+
+		select {
+			float: right;
+			text-align: center;
+		}
+
+		input {
+			width: 30px;
+			float: right;
+			text-align: right;
+		}
+
+		#error {
+			font-weight: bold;
+			text-align: center;
+			color: red;
+		}
+
+		.coin {
+			width: 28px;
+			height: auto;
+		}
+
+		#simulation {
+			text-align: center;
+		}
+
+		#penney_win, #you_win {
+			width: 28px;
+			height: 28px;
+			display: inline-block;
+			background-color: "black";
+		}
+
+		#score_board {
+			font-size: 20px;
+			font-weight: bold;
+			color: #AB4646;
+		}
+	</style>
+
+	<script>
+		function numberWithCommas(x) {
+		    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		}
+
+		function coinflip() {
+			if (Math.random() > 0.5)
+				return "H";
+			else
+				return "T";
+		}
+
+		$(document).ready(function() {
+			$("#simulate").click(function(e) {
+				e.preventDefault();
+
+				var penney_sequence = $("#penney_sequence").val();
+				var you_sequence = $("#you_sequence").val();
+
+				if (penney_sequence == you_sequence) {
+					$("#error").html("<p>You must choose a different sequence from Penney!</p>");
+					$("#simulation").hide();
+					return;
+				} else {
+					$("#error").html("");
+					$("#simulation").show();
+				}
+
+				var penney = 0;
+				$("#penney_score").html(penney);
+				var you = 0;
+				$("#you_score").html(you);
+
+				function playgame(n) {
+					if (n == 0)
+						return;
+
+					var game = $("#game");
+					game.html("");
+					var seq = [];
+					while (true) {
+						if (coinflip() == "H") {
+							game.append("<img src='images/heads.gif' class='coin'/> ");
+							seq.push("H");
+						} else {
+							game.append("<img src='images/tails.gif' class='coin'/> ");
+							seq.push("T");
+						}
+
+						if (seq.length >= 3) {
+							if (seq.slice(-3).join("") == penney_sequence) {
+								penney++;
+								$("#penney_score").html(penney);
+								break;
+							} else if (seq.slice(-3).join("") == you_sequence) {
+								you++;
+								$("#you_score").html(you);
+								break;
+							}
+						}
+					}
+
+					setTimeout(function() {playgame(n - 1)}, 75);
+				}
+
+				playgame(parseInt($("#ntrials").val()));
+			});
+
+			$("table button").click(function() {
+				$('html, body').animate({
+			        scrollTop: $("#lets_play").offset().top
+			    }, 200);
+
+				$("#penney_sequence").val($($(this).parent().siblings()[0]).html());
+				$("#you_sequence").val($($(this).parent().siblings()[1]).html());
+				$("#simulate").click();
+			});
+		});	
+	</script>
+</head>
+
+<body>
+	<div id="wrapper">
+		<a href="index.html" id="back">&lt;-- Back</a>
+		<h1 id="page_title">Penney's Game</h1>
+
+		<h2>The Game</h2>
+		<img src="images/money.gif" style="width: 250px; height: auto; float: left; margin-right: 20px;"/>
+		<p>Let's imagine that you're playing a game with Penney. The game involves flipping a sequence of coins. Penney chooses a sequence of three coin flips, such as HHH or HTH. Then, you choose a sequence of three coin flips. Penney wins if the first sequence to show up is what he picked, and you win if the first sequence to show up is the one that you picked!</p>
+		<p>Is this game based solely on luck? Or is there something else going on?</p>
+
+		<div class="clear"></div>
+
+		<h2 id="lets_play">Let's Play!</h2>
+		<div id="form_wrapper"><form>
+			<label for="penney_sequence">Penney's Chosen Sequence</label>: 
+				<select id="penney_sequence">
+					<option value="HHH">HHH</option>
+  					<option value="HHT">HHT</option>
+  					<option value="HTH">HTH</option>
+  					<option value="HTT">HTT</option>
+  					<option value="THH">THH</option>
+  					<option value="THT">THT</option>
+  					<option value="TTH">TTH</option>
+  					<option value="TTT">TTT</option>
+				</select><br/><br/>
+			<label for="you_sequence">Your Chosen Sequence</label>: 
+				<select id="you_sequence">
+					<option value="HHH">HHH</option>
+  					<option value="HHT">HHT</option>
+  					<option value="HTH">HTH</option>
+  					<option value="HTT">HTT</option>
+  					<option value="THH">THH</option>
+  					<option value="THT">THT</option>
+  					<option value="TTH">TTH</option>
+  					<option value="TTT">TTT</option>
+				</select><br/><br/>
+			<label for="ntrials"># of Games to Play</label>: <input id="ntrials" value="50"/><br/><br/>
+			<div style="width: 100%; text-align: center;"><button id="simulate" type="buton">Let's Play!</button></div>
+		</form><br/><br/>
+		<div id="error"></div>
+		<div id="simulation">
+			<div id="score_board">Penney: <span id='penney_score'>0</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; You: <span id='you_score'>0</span></div><br/>
+			<div id="game"></div>
+		</div><br/>
+		</div>
+
+		<h2>How Do You Beat Penney?</h2>
+		<p>After playing a few games with Penney, were you able to find your advantage? Try the following combinations to beat Penney at his own game!</p>
+		<table style="width: 400px;">
+			<tr>
+				<th style="width: 25%;">Penney's Choice</th>
+				<th style="width: 25%;">Your Choice</th>
+				<th style="width: 30%;">Odds in Your Favor</th>
+				<th style="width: 20%;">Try It!</th>
+			</tr>
+			<tr>
+				<td>HHH</td>
+				<td>THH</td>
+				<td>7:1</td>
+				<td><button>Try It!</button></td>
+			</tr>
+			<tr>
+				<td>HHT</td>
+				<td>THH</td>
+				<td>3:1</td>
+				<td><button>Try It!</button></td>
+			</tr>
+			<tr>
+				<td>HTH</td>
+				<td>HHT</td>
+				<td>2:1</td>
+				<td><button>Try It!</button></td>
+			</tr>
+			<tr>
+				<td>HTT</td>
+				<td>HHT</td>
+				<td>2:1</td>
+				<td><button>Try It!</button></td>
+			</tr>
+			<tr>
+				<td>THH</td>
+				<td>TTH</td>
+				<td>2:1</td>
+				<td><button>Try It!</button></td>
+			</tr>
+			<tr>
+				<td>THT</td>
+				<td>TTH</td>
+				<td>2:1</td>
+				<td><button>Try It!</button></td>
+			</tr>
+			<tr>
+				<td>TTH</td>
+				<td>HTT</td>
+				<td>3:1</td>
+				<td><button>Try It!</button></td>
+			</tr>
+			<tr>
+				<td>TTT</td>
+				<td>HTT</td>
+				<td>7:1</td>
+				<td><button>Try It!</button></td>
+			</tr>
+		</table>
+
+		<h2>What's Going On?</h2>
+		<p>For every sequence <b>1-2-3</b> that Penney chooses, your best move is to choose the sequence <b>NOT 2 - 1 - 2</b>. For example, if Penney chooses <b>H-T-H</b>, then you should choose <b>H-H-T</b>. The first in your sequence is <b>H</b> because it is the opposite of <b>T</b> (the second one in the sequence that Penney chose), and the last two are <b>H-T</b> because those are the first two in Penney's sequence.</p>
+		<p>Why does this work well? Imagine that Penney chose <b>H-H-H</b>. If he does not get <b>H-H-H</b> on the first three flips, you are definitely going to win with <b>T-H-H</b>. This is because you are always going to be "ahead" of him. That is, if the coin flips ever get to 2 consecutive heads, you win because your first <b>T</b> has already been flipped.</p>
+		<p>For the less extreme examples, the same logic applies. Because you are taking the first two in Penney's sequence to be the last two in your sequence, you have a much better chance of finishing first as when Penney gets his first two coin flips, you've already likedly completed your sequence of three!</p>
+		<p>For more, you can read Walter Penney's article in the Journal of Recreational Mathematics, Oct 1969, p. 241.</p>
+
+		<p id="footer">Copyright &copy; 2015 Yuechen Zhao and Pam Chang. All rights reserved.</p>
+	</div>
+</body>
+
+</html>

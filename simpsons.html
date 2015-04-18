@@ -34,14 +34,15 @@
 			font-size: 18px;
 		}
 
-		#wtotalprob, #htotalprob {
+		.wtotalprob, .htotalprob {
 			font-size: 18px;
 		}
 		
-		#reset_btn {
+		#sample_btns {
 			display: block;
 			margin: 0 auto;
 			margin-bottom: 20px;
+			width: 205px;
 		}
 	</style>
 
@@ -92,15 +93,15 @@
 			$("#htransplant_field").html(htransplant);
 			$("#wtotal_field").html(wbypass + wtransplant);
 			$("#htotal_field").html(hbypass + htransplant);
-			$("#wtotalprob").html("&asymp; " + Math.round(watson_overall * 100) + "%");
-			$("#htotalprob").html("&asymp; " + Math.round(holmes_overall * 100) + "%");
+			$(".wtotalprob").html(Math.round(watson_overall * 100) + "%");
+			$(".htotalprob").html(Math.round(holmes_overall * 100) + "%");
 
 			if (watson_overall > holmes_overall) {
-				$("#wtotalprob").css("color", "green");
-				$("#htotalprob").css("color", "red");
+				$(".wtotalprob").css("color", "green");
+				$(".htotalprob").css("color", "red");
 			} else {
-				$("#wtotalprob").css("color", "red");
-				$("#htotalprob").css("color", "green");
+				$(".wtotalprob").css("color", "red");
+				$(".htotalprob").css("color", "green");
 			}
 			
 			// Classic Paradox!
@@ -108,8 +109,14 @@
 				$("#better_doctor").html("Given the data above, we see that Dr. Watson is better at both bypass surgeries and heart transplants than Dr. Holmes. <b style='color: red;'>Clearly, Dr. Watson must be the better doctor!</b>");
 
 				$("#explain").show();
+				$("#better_doctor2").html("According to this, <b style='color: red;'>Dr. Holmes must be the more reliable doctor! After all, he was able to successfully complete <b class='htotalprob'></b> of his surgeries!");
+			} else if (wbypassprob < hbypassprob && wtransplantprob < htransplantprob && holmes_overall < watson_overall) {
+				$("#better_doctor").html("Given the data above, we see that Dr. Holmes is better at both bypass surgeries and heart transplants than Dr. Watson. <b style='color: red;'>Clearly, Dr. Holmes must be the better doctor!</b>");
+
+				$("#explain").show();
+				$("#better_doctor2").html("According to this, <b style='color: red;'>Dr. Watson must be the more reliable doctor! After all, he was able to successfully complete <b class='wtotalprob'></b> of his surgeries!");
 			} else {
-				$("#better_doctor").html("Given the data above, Simpson's Paradox has disappeared. Please adjust the values, or click reset.</b>");
+				$("#better_doctor").html("Given the data above, Simpson's Paradox has disappeared. Please adjust the values, or use one of the sample data sets.</b>");
 				$("#explain").hide();
 			}
 		}
@@ -119,13 +126,22 @@
 				calculate();
 			});
 			
-			$("#reset_btn").click(function() {
+			$("#sample1_btn").click(function() {
 				$("#wbypass").val(86);
 				$("#hbypass").val(250);
 				$("#wtransplant").val(150);
 				$("#htransplant").val(40);
 				calculate();
-			})
+			});
+
+			$("#sample2_btn").click(function() {
+				$("#wbypass").val(42);
+				$("#hbypass").val(138);
+				$("#wtransplant").val(200);
+				$("#htransplant").val(64);
+				calculate();
+			});
+
 			calculate();
 		});
 	</script>
@@ -133,6 +149,7 @@
 
 <body>
 	<div id="wrapper">
+		<a href="index.html" id="back">&lt;-- Back</a>
 		<h1 id="page_title">The Simpson's Paradox</h1>
 
 		<h2>The Situation</h2>
@@ -161,7 +178,7 @@
 					<td><input type="number" min="0" max="77" value="40" id="htransplant" style="width: 30px"/> / 77 <br/><br/><b id="htransplantp"></b></td>
 				</tr>
 			</table>
-			<button id="reset_btn">Reset Data</button>
+			<div id="sample_btns"><button id="sample1_btn">Sample Data 1</button>&nbsp; &nbsp; &nbsp;<button id="sample2_btn">Sample Data 2</button></div>
 		</div>
 		
 		<h2>Who's Better?</h2>
@@ -176,14 +193,18 @@
 					<th>Dr. Holmes</th>
 				</tr>
 				<tr>
-					<td><span id="wbypass_field"></span> + <span id="wtransplant_field"></span> = <b id="wtotal_field"></b><br/><br/><b id="wtotalprob"></b></td>
-					<td><span id="hbypass_field"></span> + <span id="htransplant_field"></span> = <b id="htotal_field"></b><br/><br/><b id="htotalprob"></b></td>
+					<td><span id="wbypass_field"></span> + <span id="wtransplant_field"></span> = <b id="wtotal_field"></b><br/><br/><b>&asymp;</b> <b class="wtotalprob"></b></td>
+					<td><span id="hbypass_field"></span> + <span id="htransplant_field"></span> = <b id="htotal_field"></b><br/><br/><b>&asymp;</b> <b class="htotalprob"></b></td>
 				</tr>
 			</table>
-			<p>According to this, <b style='color: red;'>Dr. Holmes must be the more reliable doctor!</b></p>
+			<p id="better_doctor2"></p>
 
 			<h2>What Happened?</h2>
+			<p>The existence of Simpson's Paradox relies on the fact that the sample sizes are different when looking at data in detail. In this case, Dr. Watson and Dr. Holmes did not conduct the same number of Bypass Surgeries and Heart Transplants. If they did, then this paradox could not exist: if Dr. Watson looks better according to the data in each category, then he will definitely look better if looking at the data in aggregate, and vice versa. Comparing the two by only looking at percentages has the potential to be misleading.</p>
+			<p>The best way to get intuition for when this situation arises is to try to play with the data above. When can you make the paradox disappear? When can you make it appear again?</p>
 		</div>
+
+		<p id="footer">Copyright &copy; 2015 Yuechen Zhao and Pam Chang. All rights reserved.</p>
 	</div>
 </body>
 

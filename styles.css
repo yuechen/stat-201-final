@@ -7,7 +7,7 @@ body {
 }
 
 #wrapper {
-	width: 600px;
+	width: 800px;
 	padding: 0;
 	margin: 0 auto;
 	background: white;
@@ -30,4 +30,35 @@ label {
 
 .clear {
 	clear: both;
+}
+
+h2 {
+	color: #2764A1;
+}
+
+a#back {
+	display: block;
+	padding-top: 20px;
+	text-decoration: none;
+	font-size: 16px;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:link, a#back:link, a:visited, a#back:visited {
+	color: #0C75ED;
+}
+
+a:hover, a#back:hover {
+	color: #0C55A8;
+	text-decoration: underline;
+}
+
+#footer {
+	margin-top: 50px;
+	color: #999;
+	text-align: center;
+	font-size: 12px;
 }
