@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>The False Positive Paradox</title>
+  <link href="styles.css" type="text/css" rel="stylesheet"/>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+  <style>
+    body p {
+      font-size: 16px;
+      line-height: 1.4em;
+    }
+    #prob, #pop {
+      width: 60px;
+    }
+    #calculate {float: right;}
+
+    #form_wrapper {
+      width: 100%;
+      border: 2px dashed #ccc;
+    }
+
+    form {
+      width: 323px;
+      margin: 0px auto;
+      padding: 20px;
+    }
+    table {
+      width: 390px;
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+
+    table th, table td {
+      padding: 8px;
+      border: 1px solid #ccc;
+    }
+    table td {
+      text-align: center;
+    }
+  </style>
+
+  <script>
+    var calculation_html;
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    function calculate() {
+      var prob = $("#prob").val() / 100;
+      var acc = $("#acc").val() / 100;
+      var pop = $("#pop").val();
+      var diseased= Math.round(prob * pop );
+      var diseased_TP = Math.round(prob * pop * acc);
+      var diseased_FN = Math.round(prob * pop) - diseased_TP
+      var non_diseased = pop - Math.round(prob * pop)
+      var non_diseased_TN = Math.round(acc * non_diseased)
+      var non_diseased_FP = non_diseased - non_diseased_TN
+      var total_pos = diseased_TP + non_diseased_FP
+      var pos_percent = Math.round(diseased_TP * 100/total_pos)
+      var false_percent = 100- Math.round(diseased_TP * 100/total_pos)
+      var total_negative = non_diseased_TN + diseased_FN
+      $("#prob_field").html($("#prob").val() + "%");
+      $("#acc_field").html($("#acc").val() + "%");
+      $("#acc_field2").html($("#acc").val() + "%");
+      $("#DTP").html(diseased_TP);
+      $("#DFN").html(diseased_FN);
+      $("#diseased_pop").html(diseased);
+      $("#pop_ND_field").html(numberWithCommas(non_diseased));
+      $("#pop_field").html(numberWithCommas(pop));
+      $("#pop_field2").html(numberWithCommas(pop));
+      $("#people_field").html(numberWithCommas(diseased_TP));
+      $("#non_diseased_TN_field").html(numberWithCommas(non_diseased_TN));
+      $("#pop_ND_calc").html(numberWithCommas(non_diseased));
+      $("#pop_ND_false_pos").html(numberWithCommas(non_diseased_FP));
+      $("#NDFP").html(numberWithCommas(non_diseased_FP));
+      $("#DTP2").html(diseased_TP);
+      $("#positives_field").html(numberWithCommas(total_pos));
+      $("#positives_percentage").html(numberWithCommas(pos_percent) + "%");
+      $("#false_percentage").html(numberWithCommas(false_percent) + "%");
+      // values for the table//
+      $("#pop_field_box").html(numberWithCommas(pop));
+      $("#diseased_field_box").html(numberWithCommas(diseased_TP));
+      $("#DFN_box").html(diseased_FN);
+      $("#diseased_pop_box").html(diseased);
+      $("#pop_ND_box").html(numberWithCommas(non_diseased));
+      $("#non_diseased_TN_box").html(numberWithCommas(non_diseased_TN));
+      $("#total_negative_box").html(numberWithCommas(total_negative));
+      $("#positives_box").html(numberWithCommas(total_pos));
+      $("#ND_positives_box").html(numberWithCommas(non_diseased_FP));
+
+    }
+    $(document).ready(function() {
+      $('input').keypress(function (e) {
+        if (e.which == 13) {
+          e.preventDefault();
+          calculate();
+        }
+      });
+
+      $("#calculate").click(function() {
+        calculate();
+      });
+
+      calculation_html = $("#calculation").html();
+      calculate();
+    });
+  </script>
+</head>
+
+<body>
+  <div id="wrapper">
+    <a href="index.html" id="back">&lt;-- Back</a>
+    <h1 id="page_title">False Positive Paradox</h1>
+
+    <h2>The Doctor's Diagnosis</h2>
+    <img src="images/test_image.jpg" style="width: 250px; height: auto; float: left; margin-right: 20px;"/>
+    <p>A patient begins displaying symptoms of an extremely rare, terminal disease: only 0.1% of the population has it; the disease means certain death. The patient, seeking a diagnosis and treatment, goes to the doctor to have a test done. The doctor runs a test and it comes out positive.</p>
+    <p> "This test is 99% accurate!" Your doctor says, "If it is positive, then it is almost certain you have the disease." </p>
+    <p>Distraught, the patient arranges his will and says goodbye to his family. Yet months pass and he shows no more symptoms and does not die. Confused, he goes to
+      the doctor and they realize that he had a false positive.</p>
+    <p>"This test is 99% accurate!" says the Doctor, "Your false positive was so improbable!"</p>
+    <div class="clear"></div>
+
+    <h2>But is it really?</h2>
+    <p>If a test is 99% accurate, then if you tested 100 people with the illness, 99 people will get an accurate diagnosis. The accuraccy metric represents
+      P(Test Positive | Diseased). If you are taking the test, what you care about is P(Diseased | Test Positive) - the likelihood that your positive result is a true positive.</p>
+    <p>In fact, for some circumstances, a positive result may be <i>more likely</i> to be a false positive than a true positive. How can this be?</p>
+
+    <h2>Let's Do Some Calculations</h2>
+    <p>In the fields below, enter in the percent incidence - the percentate of the population which has the condition. In the above example, this is 0.1%. Then, enter in your test accuracy and our sample popuation. </p>
+    <div id="form_wrapper"><form>
+      <label for="probability">Percent Incidence: </label><input type="text" id="prob" value="0.1"/>% <br/><br/>
+      <label for="accuracy">Test accuracy: </label><input type="text" id="acc" value="99"/>% <br/><br/>
+      <label for="population">Population: </label><input type="text" id="pop" value="100000"/>
+      <input type="button" value="Calculate" id="calculate"/>
+    </form></div>
+
+      <table>
+        <tr>
+          <th style="text-align: center;">Number of people who</th>
+          <th style="text-align: center;">Have Disease</th>
+          <th style="text-align: center;">Do Not Have Disease</th>
+          <th style="text-align: center;">Total</th>
+        </tr>
+        <tr>
+          <th style="text-align: left;">Test Positive</th>
+          <td><i id="diseased_field_box"></i> </td>
+          <td> <i id="ND_positives_box"></i> </td>
+          <th style="text-align: center;"><b id="positives_box"></b> </th>
+        </tr>
+        <tr>
+          <th style="text-align: left;">Test Negative</th>
+          <td><i id="DFN_box"></i> </td>
+          <td><i id="non_diseased_TN_box"></i></td>
+          <th style="text-align: center;"><b id="total_negative_box"></b> </b></th>
+        </tr>
+        <tr>
+          <th style="text-align: left;">Total</th>
+          <td><b id="diseased_pop_box"></b> </td>
+          <td><b><b id="pop_ND_box"></b> </b></td>
+          <th style="text-align: center;"><b id="pop_field"2></b> </th>
+        </tr>
+      </table>
+
+    <div id="calculation">
+
+      <p>With our inputs, we have about <b id="prob_field"></b> x <b id="pop_field2"></b> = <b id="diseased_pop"></b> people with this disease in our population. If we run our test on these people, a test that is  <b id="acc_field"></b> accurate will give us <b id="DTP"></b> true positives and
+        <b id="DFN"></b> false negatives.
+
+      <p> However, in our population, there are also <b id="pop_ND_field"></b> people who do not have the disease. If we were to apply the same test to these people, then
+        <b id="acc_field2"></b> x <b id="pop_ND_calc"></b> = <b id="non_diseased_TN_field"></b> would correctly test negative. <i>However,</i>  <b id="pop_ND_false_pos"></b>
+        of the non-diseased population will test positive, and here we will have false positives. </p>
+      <p> As a result, if we were to test everyone in this population, we would get <b id="NDFP"></b> + <b id="DTP2"></b> = <b id="positives_field"></b> positive results, but only
+          <b id="positives_percentage"></b> will be true positives. <i>Even if</i> you took this test and got a positive result, it is actually <b id="false_percentage"></b> likely that you <i>do not</i> have the disease.
+    </div>
+
+    <div id="explain">
+      <h2>What happened?</h2>
+      <p>In specific situations when some condition has a very low occurance rate in a population (in our example, the disease was very rare) then it is very possible when testing for the condition to get <i>more</i> false positives than true positives, despite how 'accurate' the test is proported to be. It is a fallacy
+      to think that if your test is 99% accurate, your individual result is 99% accurate. </p>
+
+      <p>In our situation, since the disease was so rare, even if we tested positive, it was still unlikely that we actually had the disease.</p>
+
+      <p>The false positive paradox is a common issue in not only medicine, but many other fields such as criminology and biology. In fact, many surveys have revealed that <a href="http://www.stfm.org/fmhub/fm2008/May/Goutham354.pdf">medical professionals do not completely understand this paradox</a>. </p>
+    </div>
+
+    <p id="footer">Copyright &copy; 2015 Yuechen Zhao and Pam Chang. All rights reserved.</p>
+  </div>
+</body>
+
+</html>
